@@ -1,4 +1,4 @@
-<robot name="demo">
+<robot name="panda">
   <contact name="top">
     <link name="support_link"/>
     <point>
