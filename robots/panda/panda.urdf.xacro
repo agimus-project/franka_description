@@ -7,7 +7,13 @@
   <xacro:arg name="arm_id" default="panda" />
 
   <!-- Should a franka_gripper be mounted at the flange?" -->
-  <xacro:arg name="hand" default="false" />
+  <xacro:arg name="hand" default="true" />
+  <!-- Should a camera be mounted on the franka_gripper?" -->
+  <xacro:arg name="camera_hand" default="true" />
+  <!-- Should a franka_gripper use it's capsule collision?" -->
+  <xacro:arg name="hand_col" default="false" />
+  <!-- Should we use convex collision meshes?" -->
+  <xacro:arg name="convex_col" default="true" />
   <!-- Positional offset between $(arm_id)_hand -> $(arm_id)_hand_tcp [m]. Only used when hand:=true -->
   <xacro:arg name="tcp_xyz" default="0 0 0.1034" />
   <!-- Rotational offset between $(arm_id)_hand -> $(arm_id)_hand_tcp [rad]. Only used when hand:=true -->
@@ -30,7 +36,10 @@
                       gazebo="$(arg gazebo)"
                       parent="$(arg parent)"
                       xyz="$(arg xyz)"
-                      rpy="$(arg rpy)">
+                      rpy="$(arg rpy)"
+                      hand_col="$(arg hand_col)"
+                      convex_col="$(arg convex_col)"
+                      camera_hand="$(arg camera_hand)">
   </xacro:franka_robot>
 
 </robot>

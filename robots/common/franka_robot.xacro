@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:macro name="franka_robot" params="arm_id joint_limits parent:='world' xyz:='0 0 0' rpy:='0 0 0' hand:=false gazebo:=false tcp_xyz:='0 0 0.1034' tcp_rpy='0 0 0'">
+  <xacro:macro name="franka_robot" params="arm_id joint_limits parent:='world' xyz:='0 0 0' rpy:='0 0 0' hand:=false camera_hand:=false gazebo:=false self_col:=true hand_col:=false tcp_xyz:='0 0 0.1034' tcp_rpy:='0 0 0' convex_col:=false">
 
     <xacro:include filename="$(find franka_description)/robots/common/utils.xacro" />
     <xacro:include filename="$(find franka_description)/robots/common/franka_arm.xacro" />
 
-    <xacro:franka_arm arm_id="${arm_id}" safety_distance="0.03" gazebo="${gazebo}" joint_limits="${joint_limits}"/>
+    <xacro:franka_arm arm_id="${arm_id}" safety_distance="0.03" self_col="${self_col}" joint_limits="${joint_limits}"/>
 
     <xacro:if value="${hand}">
       <xacro:include filename="$(find franka_description)/robots/common/franka_hand.xacro"/>
@@ -16,8 +16,20 @@
           tcp_rpy="${tcp_rpy}"
           connected_to="${arm_id}_link8"
           safety_distance="0.03"
-          gazebo="${gazebo}"
+          self_col="${self_col}"
+          hand_col="${hand_col}"
+          convex_col="${convex_col}"
        />
+
+       <xacro:if value="${camera_hand}">
+        <xacro:include filename="$(find franka_description)/robots/common/camera.xacro"/>
+        <xacro:camera_hand
+            arm_id="${arm_id}"
+            rpy="0.022100209841200636 -1.3156624527412932 3.061881150974905"
+            xyz="0.13682768843416482 -0.009443400298528096 -0.08387833599341328"
+            connected_to="panda_hand"
+        />
+       </xacro:if>
     </xacro:if>
 
     <!-- Define additional Gazebo tags -->
