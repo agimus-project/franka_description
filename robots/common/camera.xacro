@@ -3,9 +3,6 @@
 
   <xacro:macro name="camera_hand" params="connected_to:='' arm_id:='panda' rpy:='0 0 0' xyz:='0 0 0' description_pkg:=franka_description">
 
-    <material name="aluminum">
-      <color rgba="0.5 0.5 0.5 1"/>
-    </material>
     <material name="plastic">
       <color rgba="0.1 0.1 0.1 1"/>
     </material>
