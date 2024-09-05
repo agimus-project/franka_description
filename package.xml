@@ -14,5 +14,7 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <exec_depend>xacro</exec_depend>
+  <exec_depend>realsense2_description</exec_depend>
+
   <test_depend>rosunit</test_depend>
 </package>
