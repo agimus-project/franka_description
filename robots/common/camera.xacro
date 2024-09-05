@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="camera">
+
+  <xacro:macro name="camera_hand" params="connected_to:='' arm_id:='panda' rpy:='0 0 0' xyz:='0 0 0' description_pkg:=franka_description">
+
+    <material name="plastic">
+      <color rgba="0.1 0.1 0.1 1"/>
+    </material>
+
+    <xacro:unless value="${connected_to == ''}">
+      <joint name="${arm_id}_ref_camera_joint" type="fixed">
+        <parent link="${connected_to}" />
+        <child link="${arm_id}_ref_camera_link" />
+        <origin xyz="${xyz}" rpy="${rpy}" />
+      </joint>
+    </xacro:unless>
+    <link name="${arm_id}_ref_camera_link"/>
+
+    <!-- camera body, with origin at bottom screw mount -->
+    <joint name="${arm_id}_camera_joint" type="fixed">
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <parent link="${arm_id}_ref_camera_link"/>
+      <child link="${arm_id}_camera_bottom_screw_frame"/>
+    </joint>
+    <link name="${arm_id}_camera_bottom_screw_frame"/>
+
+    <joint name="${arm_id}_camera_link_joint" type="fixed">
+      <origin rpy="0 0 0" xyz="0.010600000000000002 0.0175 0.0125"/>
+      <parent link="${arm_id}_camera_bottom_screw_frame"/>
+      <child link="${arm_id}_camera_link"/>
+    </joint>
+    <link name="${arm_id}_camera_link">
+      <visual>
+          <!-- the mesh origin is at front plate in between the two infrared camera axes -->
+          <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0.0043 -0.0175 0"/>
+          <geometry>
+          <mesh filename="package://realsense2_description/meshes/d435.dae"/>
+          </geometry>
+      </visual>
+      <collision>
+          <origin rpy="0 0 0" xyz="0 -0.0175 0"/>
+          <geometry>
+          <box size="0.02505 0.09 0.025"/>
+          </geometry>
+      </collision>
+      <inertial>
+          <!-- The following are not reliable values, and should not be used for modeling -->
+          <mass value="0.072"/>
+          <origin xyz="0 0 0"/>
+          <inertia ixx="0.003881243" ixy="0.0" ixz="0.0" iyy="0.000498940" iyz="0.0" izz="0.003879257"/>
+      </inertial>
+    </link>
+
+    <!-- camera depth joints and links -->
+    <joint name="${arm_id}_camera_depth_joint" type="fixed">
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <parent link="${arm_id}_camera_link"/>
+      <child link="${arm_id}_camera_depth_frame"/>
+    </joint>
+
+    <link name="${arm_id}_camera_depth_frame"/>
+    <joint name="${arm_id}_camera_depth_optical_joint" type="fixed">
+      <origin rpy="-1.5707963267948966 0 -1.5707963267948966" xyz="0 0 0"/>
+      <parent link="${arm_id}_camera_depth_frame"/>
+      <child link="${arm_id}_camera_depth_optical_frame"/>
+    </joint>
+    <link name="${arm_id}_camera_depth_optical_frame"/>
+
+    <!-- camera left IR joints and links -->
+    <joint name="${arm_id}_camera_infra1_joint" type="fixed">
+      <origin rpy="0 0 0" xyz="0 0.0 0"/>
+      <parent link="${arm_id}_camera_link"/>
+      <child link="${arm_id}_camera_infra1_frame"/>
+    </joint>
+    <link name="${arm_id}_camera_infra1_frame"/>
+
+    <joint name="${arm_id}_camera_infra1_optical_joint" type="fixed">
+      <origin rpy="-1.5707963267948966 0 -1.5707963267948966" xyz="0 0 0"/>
+      <parent link="${arm_id}_camera_infra1_frame"/>
+      <child link="${arm_id}_camera_infra1_optical_frame"/>
+    </joint>
+    <link name="${arm_id}_camera_infra1_optical_frame"/>
+
+    <!-- camera right IR joints and links -->
+    <joint name="${arm_id}_camera_infra2_joint" type="fixed">
+      <origin rpy="0 0 0" xyz="0 -0.05 0"/>
+      <parent link="${arm_id}_camera_link"/>
+      <child link="${arm_id}_camera_infra2_frame"/>
+    </joint>
+    <link name="${arm_id}_camera_infra2_frame"/>
+
+    <joint name="${arm_id}_camera_infra2_optical_joint" type="fixed">
+      <origin rpy="-1.5707963267948966 0 -1.5707963267948966" xyz="0 0 0"/>
+      <parent link="${arm_id}_camera_infra2_frame"/>
+      <child link="${arm_id}_camera_infra2_optical_frame"/>
+    </joint>
+    <link name="${arm_id}_camera_infra2_optical_frame"/>
+
+    <!-- camera color joints and links -->
+    <joint name="${arm_id}_camera_color_joint" type="fixed">
+      <origin rpy="0 0 0" xyz="0 0.015 0"/>
+      <parent link="${arm_id}_camera_link"/>
+      <child link="${arm_id}_camera_color_frame"/>
+    </joint>
+
+    <link name="${arm_id}_camera_color_frame"/>
+    <joint name="${arm_id}_camera_color_optical_joint" type="fixed">
+      <origin rpy="-1.5707963267948966 0 -1.5707963267948966" xyz="0 0 0"/>
+      <parent link="${arm_id}_camera_color_frame"/>
+      <child link="${arm_id}_camera_color_optical_frame"/>
+    </joint>
+    <link name="${arm_id}_camera_color_optical_frame"/>
+
+    <!-- camera support -->
+    <joint name="${arm_id}_camera_support_joint" type="fixed">
+      <parent link="${arm_id}_hand"/>
+      <child link="${arm_id}_camera_support_link"/>
+      <origin rpy="3.141592653589793 0 0" xyz="0 0 0"/>
+    </joint>
+    <link name="${arm_id}_camera_support_link">
+      <inertial>
+          <mass value="0.010"/>
+          <origin xyz="0 0 0"/>
+          <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+      </inertial>
+      <visual>
+          <origin rpy="3.141592653589793 0 -1.5707963267948966" xyz="0.022 0 -0.012"/>
+          <geometry>
+          <mesh filename="package://${description_pkg}/meshes/visual/camera-support.stl" scale="1 1 1"/>
+          </geometry>
+          <material name="plastic"/>
+      </visual>
+      <collision>
+          <origin rpy="3.141592653589793 0 -1.5707963267948966" xyz="0.022 0 -0.012"/>
+          <geometry>
+          <mesh filename="package://${description_pkg}/meshes/collision/camera-support.stl" scale="1 1 1"/>
+          </geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+</robot>
