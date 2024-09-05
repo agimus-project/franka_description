@@ -3,7 +3,7 @@
 
   <xacro:macro name="camera_hand" params="connected_to:='' arm_id:='panda' rpy:='0 0 0' xyz:='0 0 0' description_pkg:=franka_description">
 
-    <material name="plastic">
+    <material name="black_printed_plastic">
       <color rgba="0.1 0.1 0.1 1"/>
     </material>
 
@@ -21,7 +21,7 @@
     <xacro:sensor_d435 parent="${arm_id}_ref_camera_link" name="${arm_id}_camera" use_nominal_extrinsics="true" add_plug="false" use_mesh="true">
       <origin xyz="0 0 0" rpy="0 0 0"/>
     </xacro:sensor_d435>
-    
+
     <!-- camera support -->
     <joint name="${arm_id}_camera_support_joint" type="fixed">
       <parent link="${arm_id}_hand"/>
@@ -40,7 +40,7 @@
           <geometry>
           <mesh filename="package://${description_pkg}/meshes/visual/camera-support.stl" scale="1 1 1"/>
           </geometry>
-          <material name="plastic"/>
+          <material name="black_printed_plastic"/>
       </visual>
       <collision>
           <origin rpy="3.141592653589793 0 -1.5707963267948966" xyz="0.022 0 -0.012"/>
