@@ -1,35 +1,37 @@
 <?xml version='1.0' encoding='utf-8'?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:macro name="franka_robot" params="arm_id joint_limits parent:='world' xyz:='0 0 0' rpy:='0 0 0' hand:=false camera_hand:=false gazebo:=false self_col:=true hand_col:=false tcp_xyz:='0 0 0.1034' tcp_rpy:='0 0 0' convex_col:=false">
+  <xacro:macro name="franka_robot"
+    params="arm_id joint_limits parent:='world' xyz:='0 0 0' rpy:='0 0 0' hand:=false camera_hand:=false gazebo:=false hand_col:=false tcp_xyz:='0 0 0.1034' tcp_rpy:='0 0 0' convex_col:=false">
 
     <xacro:include filename="$(find franka_description)/robots/common/utils.xacro" />
     <xacro:include filename="$(find franka_description)/robots/common/franka_arm.xacro" />
 
-    <xacro:franka_arm arm_id="${arm_id}" safety_distance="0.03" self_col="${self_col}" joint_limits="${joint_limits}"/>
+    <xacro:franka_arm arm_id="${arm_id}" safety_distance="0.03"
+      joint_limits="${joint_limits}" gazebo="${gazebo}"/>
 
     <xacro:if value="${hand}">
-      <xacro:include filename="$(find franka_description)/robots/common/franka_hand.xacro"/>
+      <xacro:include filename="$(find franka_description)/robots/common/franka_hand.xacro" />
       <xacro:franka_hand
-          arm_id="${arm_id}"
-          rpy="0 0 ${-pi/4}"
-          tcp_xyz="${tcp_xyz}"
-          tcp_rpy="${tcp_rpy}"
-          connected_to="${arm_id}_link8"
-          safety_distance="0.03"
-          self_col="${self_col}"
-          hand_col="${hand_col}"
-          convex_col="${convex_col}"
-       />
+        arm_id="${arm_id}"
+        rpy="0 0 ${-pi/4}"
+        tcp_xyz="${tcp_xyz}"
+        tcp_rpy="${tcp_rpy}"
+        connected_to="${arm_id}_link8"
+        safety_distance="0.03"
+        hand_col="${hand_col}"
+        convex_col="${convex_col}"
+        gazebo="${gazebo}"
+      />
 
-       <xacro:if value="${camera_hand}">
-        <xacro:include filename="$(find franka_description)/robots/common/camera.xacro"/>
+      <xacro:if value="${camera_hand}">
+        <xacro:include filename="$(find franka_description)/robots/common/camera.xacro" />
         <xacro:camera_hand
-            arm_id="${arm_id}"
-            rpy="0.022100209841200636 -1.3156624527412932 3.061881150974905"
-            xyz="0.13682768843416482 -0.009443400298528096 -0.08387833599341328"
-            connected_to="panda_hand"
+          arm_id="${arm_id}"
+          rpy="0.022100209841200636 -1.3156624527412932 3.061881150974905"
+          xyz="0.13682768843416482 -0.009443400298528096 -0.08387833599341328"
+          connected_to="panda_hand"
         />
-       </xacro:if>
+      </xacro:if>
     </xacro:if>
 
     <!-- Define additional Gazebo tags -->
@@ -43,43 +45,196 @@
         <joint name="${parent}_joint" type="fixed">
           <origin xyz="${xyz}" rpy="${rpy}" />
           <parent link="${parent}" />
-          <child  link="${arm_id}_link0" />
+          <child link="${arm_id}_link0" />
         </joint>
       </xacro:if>
 
-      <xacro:gazebo-joint joint="${arm_id}_joint1" transmission="hardware_interface/PositionJointInterface" />
-      <xacro:gazebo-joint joint="${arm_id}_joint2" transmission="hardware_interface/PositionJointInterface" />
-      <xacro:gazebo-joint joint="${arm_id}_joint3" transmission="hardware_interface/PositionJointInterface" />
-      <xacro:gazebo-joint joint="${arm_id}_joint4" transmission="hardware_interface/PositionJointInterface" />
-      <xacro:gazebo-joint joint="${arm_id}_joint5" transmission="hardware_interface/PositionJointInterface" />
-      <xacro:gazebo-joint joint="${arm_id}_joint6" transmission="hardware_interface/PositionJointInterface" />
-      <xacro:gazebo-joint joint="${arm_id}_joint7" transmission="hardware_interface/PositionJointInterface" />
+      <xacro:if value="${camera_hand}">
+        <gazebo reference="panda_ref_camera_link">
+          <self_collide>0</self_collide>
+          <enable_wind>0</enable_wind>
+          <kinematic>0</kinematic>
+          <gravity>1</gravity>
+          <!--<mu>1</mu>-->
+          <mu2>1</mu2>
+          <fdir1>0 0 0</fdir1>
+          <!--<slip1>0</slip1>
+            <slip2>0</slip2>-->
+          <kp>1e+13</kp>
+          <kd>1</kd>
+          <!--<max_vel>0.01</max_vel>
+            <min_depth>0</min_depth>-->
+          <sensor name="d435color" type="camera">
+            <camera name="d435">
+              <horizontal_fov>1.2112585008840648</horizontal_fov>
+              <image>
+                <width>1920</width>
+                <height>1080</height>
+                <format>RGB_INT8</format>
+              </image>
+              <clip>
+                <near>0.1</near>
+                <far>100</far>
+              </clip>
+              <noise>
+                <type>gaussian</type>
+                <mean>0.0</mean>
+                <stddev>0.007</stddev>
+              </noise>
+            </camera>
+            <always_on>1</always_on>
+            <update_rate>30</update_rate>
+            <visualize>1</visualize>
+          </sensor>
+          <sensor name="d435ired1" type="camera">
+            <camera name="d435">
+              <horizontal_fov>1.4870205226991688</horizontal_fov>
+              <image>
+                <width>1280</width>
+                <height>720</height>
+                <format>L_INT8</format>
+              </image>
+              <clip>
+                <near>0.1</near>
+                <far>100</far>
+              </clip>
+              <noise>
+                <type>gaussian</type>
+                <mean>0.0</mean>
+                <stddev>0.05</stddev>
+              </noise>
+            </camera>
+            <always_on>1</always_on>
+            <update_rate>90</update_rate>
+            <visualize>0</visualize>
+          </sensor>
+          <sensor name="d435ired2" type="camera">
+            <camera name="d435">
+              <horizontal_fov>1.4870205226991688</horizontal_fov>
+              <image>
+                <width>1280</width>
+                <height>720</height>
+                <format>L_INT8</format>
+              </image>
+              <clip>
+                <near>0.1</near>
+                <far>100</far>
+              </clip>
+              <noise>
+                <type>gaussian</type>
+                <mean>0.0</mean>
+                <stddev>0.05</stddev>
+              </noise>
+            </camera>
+            <always_on>1</always_on>
+            <update_rate>90</update_rate>
+            <visualize>0</visualize>
+          </sensor>
+          <sensor name="d435depth" type="depth">
+            <camera name="d435">
+              <horizontal_fov>1.4870205226991688</horizontal_fov>
+              <image>
+                <width>1280</width>
+                <height>720</height>
+              </image>
+              <clip>
+                <near>0.1</near>
+                <far>100</far>
+              </clip>
+              <noise>
+                <type>gaussian</type>
+                <mean>0.0</mean>
+                <stddev>0.100</stddev>
+              </noise>
+            </camera>
+            <always_on>1</always_on>
+            <update_rate>90</update_rate>
+            <visualize>0</visualize>
+          </sensor>
+        </gazebo>
+        <gazebo>
+          <plugin filename="librealsense_gazebo_plugin.so" name="camera">
+            <prefix>d435</prefix>
+            <depthUpdateRate>60.0</depthUpdateRate>
+            <colorUpdateRate>60.0</colorUpdateRate>
+            <infraredUpdateRate>60.0</infraredUpdateRate>
+            <depthTopicName>depth/image_raw</depthTopicName>
+            <depthCameraInfoTopicName>depth/camera_info</depthCameraInfoTopicName>
+            <colorTopicName>color/image_raw</colorTopicName>
+            <colorCameraInfoTopicName>color/camera_info</colorCameraInfoTopicName>
+            <infrared1TopicName>infra1/image_raw</infrared1TopicName>
+            <infrared1CameraInfoTopicName>infra1/camera_info</infrared1CameraInfoTopicName>
+            <infrared2TopicName>infra2/image_raw</infrared2TopicName>
+            <infrared2CameraInfoTopicName>infra2/camera_info</infrared2CameraInfoTopicName>
+            <colorOpticalframeName>camera_color_optical_frame</colorOpticalframeName>
+            <depthOpticalframeName>camera_depth_optical_frame</depthOpticalframeName>
+            <infrared1OpticalframeName>camera_infrared1_optical_frame</infrared1OpticalframeName>
+            <infrared2OpticalframeName>camera_infrared2_optical_frame</infrared2OpticalframeName>
+            <rangeMinDepth>0.2</rangeMinDepth>
+            <rangeMaxDepth>10.0</rangeMaxDepth>
+            <pointCloud>true</pointCloud>
+            <pointCloudTopicName>depth/points</pointCloudTopicName>
+            <pointCloudCutoff>0.5</pointCloudCutoff>
+          </plugin>
+        </gazebo>
+      </xacro:if>
 
-      <xacro:gazebo-joint joint="${arm_id}_joint1" transmission="hardware_interface/VelocityJointInterface" />
-      <xacro:gazebo-joint joint="${arm_id}_joint2" transmission="hardware_interface/VelocityJointInterface" />
-      <xacro:gazebo-joint joint="${arm_id}_joint3" transmission="hardware_interface/VelocityJointInterface" />
-      <xacro:gazebo-joint joint="${arm_id}_joint4" transmission="hardware_interface/VelocityJointInterface" />
-      <xacro:gazebo-joint joint="${arm_id}_joint5" transmission="hardware_interface/VelocityJointInterface" />
-      <xacro:gazebo-joint joint="${arm_id}_joint6" transmission="hardware_interface/VelocityJointInterface" />
-      <xacro:gazebo-joint joint="${arm_id}_joint7" transmission="hardware_interface/VelocityJointInterface" />
+      <xacro:gazebo-joint joint="${arm_id}_joint1"
+        transmission="hardware_interface/PositionJointInterface" />
+      <xacro:gazebo-joint joint="${arm_id}_joint2"
+        transmission="hardware_interface/PositionJointInterface" />
+      <xacro:gazebo-joint joint="${arm_id}_joint3"
+        transmission="hardware_interface/PositionJointInterface" />
+      <xacro:gazebo-joint joint="${arm_id}_joint4"
+        transmission="hardware_interface/PositionJointInterface" />
+      <xacro:gazebo-joint joint="${arm_id}_joint5"
+        transmission="hardware_interface/PositionJointInterface" />
+      <xacro:gazebo-joint joint="${arm_id}_joint6"
+        transmission="hardware_interface/PositionJointInterface" />
+      <xacro:gazebo-joint joint="${arm_id}_joint7"
+        transmission="hardware_interface/PositionJointInterface" />
 
-      <xacro:gazebo-joint joint="${arm_id}_joint1" transmission="hardware_interface/EffortJointInterface" />
-      <xacro:gazebo-joint joint="${arm_id}_joint2" transmission="hardware_interface/EffortJointInterface" />
-      <xacro:gazebo-joint joint="${arm_id}_joint3" transmission="hardware_interface/EffortJointInterface" />
-      <xacro:gazebo-joint joint="${arm_id}_joint4" transmission="hardware_interface/EffortJointInterface" />
-      <xacro:gazebo-joint joint="${arm_id}_joint5" transmission="hardware_interface/EffortJointInterface" />
-      <xacro:gazebo-joint joint="${arm_id}_joint6" transmission="hardware_interface/EffortJointInterface" />
-      <xacro:gazebo-joint joint="${arm_id}_joint7" transmission="hardware_interface/EffortJointInterface" />
+      <xacro:gazebo-joint joint="${arm_id}_joint1"
+        transmission="hardware_interface/VelocityJointInterface" />
+      <xacro:gazebo-joint joint="${arm_id}_joint2"
+        transmission="hardware_interface/VelocityJointInterface" />
+      <xacro:gazebo-joint joint="${arm_id}_joint3"
+        transmission="hardware_interface/VelocityJointInterface" />
+      <xacro:gazebo-joint joint="${arm_id}_joint4"
+        transmission="hardware_interface/VelocityJointInterface" />
+      <xacro:gazebo-joint joint="${arm_id}_joint5"
+        transmission="hardware_interface/VelocityJointInterface" />
+      <xacro:gazebo-joint joint="${arm_id}_joint6"
+        transmission="hardware_interface/VelocityJointInterface" />
+      <xacro:gazebo-joint joint="${arm_id}_joint7"
+        transmission="hardware_interface/VelocityJointInterface" />
+
+      <xacro:gazebo-joint joint="${arm_id}_joint1"
+        transmission="hardware_interface/EffortJointInterface" />
+      <xacro:gazebo-joint joint="${arm_id}_joint2"
+        transmission="hardware_interface/EffortJointInterface" />
+      <xacro:gazebo-joint joint="${arm_id}_joint3"
+        transmission="hardware_interface/EffortJointInterface" />
+      <xacro:gazebo-joint joint="${arm_id}_joint4"
+        transmission="hardware_interface/EffortJointInterface" />
+      <xacro:gazebo-joint joint="${arm_id}_joint5"
+        transmission="hardware_interface/EffortJointInterface" />
+      <xacro:gazebo-joint joint="${arm_id}_joint6"
+        transmission="hardware_interface/EffortJointInterface" />
+      <xacro:gazebo-joint joint="${arm_id}_joint7"
+        transmission="hardware_interface/EffortJointInterface" />
 
       <xacro:transmission-franka-state arm_id="${arm_id}" />
       <xacro:transmission-franka-model arm_id="${arm_id}"
-         root="${arm_id}_joint1"
-         tip="${arm_id}_joint8"
-       />
+        root="${arm_id}_joint1"
+        tip="${arm_id}_joint8"
+      />
 
       <xacro:if value="${hand}">
-        <xacro:gazebo-joint joint="${arm_id}_finger_joint1" transmission="hardware_interface/EffortJointInterface" />
-        <xacro:gazebo-joint joint="${arm_id}_finger_joint2" transmission="hardware_interface/EffortJointInterface" />
+        <xacro:gazebo-joint joint="${arm_id}_finger_joint1"
+          transmission="hardware_interface/EffortJointInterface" />
+        <xacro:gazebo-joint joint="${arm_id}_finger_joint2"
+          transmission="hardware_interface/EffortJointInterface" />
         <!-- Friction specific material for Rubber/Rubber contact -->
         <xacro:gazebo-friction link="${arm_id}_leftfinger" mu="1.13" />
         <xacro:gazebo-friction link="${arm_id}_rightfinger" mu="1.13" />
@@ -93,5 +248,6 @@
         <self_collide>true</self_collide>
       </gazebo>
     </xacro:if>
+    
   </xacro:macro>
 </robot>
