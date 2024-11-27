@@ -15,7 +15,8 @@
                      safety_distance="$(arg safety_distance)"
                      gazebo="$(arg gazebo)"
                      description_pkg="$(arg description_pkg)"
-                     with_sc="$(arg with_sc)">
+                     with_sc="$(arg with_sc)"
+                     lock_finger_joints="$(arg lock_finger_joints)">
    </xacro:franka_hand>
 
 </robot>

@@ -58,6 +58,7 @@
         gazebo="${gazebo}"
         description_pkg="$(arg description_pkg)"
         with_sc="${with_sc}"
+        lock_finger_joints="$(arg lock_finger_joints)"
       />
     </xacro:if>
 

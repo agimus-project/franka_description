@@ -37,4 +37,7 @@
   <!-- Should fake sensors be used? -->
   <xacro:arg name="description_pkg" default="franka_description" />
 
+  <!-- Should finger joints be locked? -->
+  <xacro:arg name="lock_finger_joints" default="false" />
+
 </robot>
