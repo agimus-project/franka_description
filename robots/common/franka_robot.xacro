@@ -6,6 +6,7 @@
                       kinematics
                       inertials
                       dynamics
+                      controller_config_path='$(find franka_gazebo_bringup)/config/franka_gazebo_controllers.yaml'
                       parent:='world'
                       xyz:='0 0 0'
                       rpy:='0 0 0'
@@ -140,6 +141,7 @@
       <xacro:franka_arm_ros2_control
           arm_id="$(arg arm_id)"
           robot_ip="$(arg robot_ip)"
+          controller_config_path="$(arg controller_config_path)"
           use_fake_hardware="$(arg use_fake_hardware)"
           fake_sensor_commands="$(arg fake_sensor_commands)"
           gazebo="$(arg gazebo)"

@@ -6,6 +6,9 @@
   <!-- Name for this robot -->
   <xacro:arg name="arm_id" default="fp3" />
 
+  <!-- Path to controller configuration when using Gazebo -->
+  <xacro:arg name="controller_config_path" default="$(find franka_gazebo_bringup)/config/franka_gazebo_controllers.yaml" />
+
   <!-- Should an end-effector be mounted at the flange?" -->
   <xacro:arg name="hand" default="true" />
 
@@ -38,6 +41,7 @@
                       inertials="${xacro.load_yaml('$(find franka_description)/robots/$(arg arm_id)/inertials.yaml')}"
                       kinematics="${xacro.load_yaml('$(find franka_description)/robots/$(arg arm_id)/kinematics.yaml')}"
                       dynamics="${xacro.load_yaml('$(find franka_description)/robots/$(arg arm_id)/dynamics.yaml')}"
+                      controller_config_path='$(arg controller_config_path)'
                       gazebo="$(arg gazebo)"
                       hand="$(arg hand)"
                       ee_id="$(arg ee_id)"
