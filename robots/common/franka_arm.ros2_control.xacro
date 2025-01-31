@@ -4,7 +4,7 @@
 <xacro:macro name="franka_arm_ros2_control" 
          params="arm_id 
              robot_ip 
-             controller_config_path:='$(find franka_gazebo_bringup)/config/franka_gazebo_controllers.yaml'
+             franka_controllers_params:='$(find franka_gazebo_bringup)/config/franka_gazebo_controllers.yaml'
              use_fake_hardware:=^|false 
              fake_sensor_commands:=^|false 
              gazebo:=^|false 
@@ -64,7 +64,7 @@
     <xacro:if value="${gazebo}">
       <gazebo>
         <plugin filename="franka_ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
-          <parameters>${controller_config_path}</parameters>
+          <parameters>${franka_controllers_params}</parameters>
         </plugin>
       </gazebo>
     </xacro:if>
