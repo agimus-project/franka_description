@@ -73,9 +73,6 @@
       <gazebo>
         <plugin filename="franka_ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
           <parameters>$(find franka_gazebo_bringup)/config/franka_gazebo_controllers.yaml</parameters>
-          <ros>
-            <remapping>/joint_states:=/franka/joint_states</remapping>
-          </ros>
         </plugin>
       </gazebo>
     </xacro:if>
