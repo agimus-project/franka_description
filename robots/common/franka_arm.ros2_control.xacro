@@ -89,6 +89,12 @@
       <gazebo>
         <plugin filename="franka_ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
           <parameters>${franka_controllers_params}</parameters>
+           <ros>
+            <remapping>/joint_states:=/franka/joint_states</remapping>
+            <remapping>/gripper_action_controller/gripper_cmd/_action/feedback:=/franka_gripper_node/gripper_action/_action/feedback</remapping>
+            <remapping>/gripper_action_controller/gripper_cmd/_action/status:=/franka_gripper_node/gripper_action/_action/status</remapping>
+            <remapping>/gripper_action_controller/transition_event:=/franka_gripper_node/transition_event</remapping>
+          </ros>
         </plugin>
       </gazebo>
     </xacro:if>
