@@ -17,13 +17,19 @@
                       robot_ip:=''
                       use_fake_hardware:=false
                       fake_sensor_commands:=false
-                      gazebo_effort:=false">
+                      gazebo_effort:=false
+                      no_prefix:='false'
+                      arm_prefix:=''
+                      connected_to:='base'
+                      multi_arm:=false">
     <xacro:include filename="$(find franka_description)/robots/common/utils.xacro" />
 
     <xacro:include filename="$(find franka_description)/robots/common/franka_arm.xacro" />
-
+    <xacro:property name="arm_prefix_modified" value="${'' if arm_prefix == '' else arm_prefix + '_'}" />
     <xacro:franka_arm
       arm_id="${arm_id}"
+      arm_prefix="${arm_prefix_modified}"
+      no_prefix="${no_prefix}"
       xyz="${xyz}"
       rpy="${rpy}"
       safety_distance="0.03"
@@ -33,6 +39,7 @@
       inertials="${inertials}"
       dynamics="${dynamics}"
       with_sc="${with_sc}"
+      connected_to="${connected_to}"
     />
 
     <xacro:if value="${hand and ee_id == 'franka_hand'}">
@@ -45,13 +52,16 @@
       <xacro:if value="${arm_id == 'fr3' or arm_id == 'fer'}">
         <xacro:property name="ee_color" value="white" />
       </xacro:if>
+      <xacro:property name="special_connection" value="$(arg special_connection)" />
+      <xacro:property name="connection" value="${special_connection if special_connection != '' else arm_id + '_link8'}" />
       <xacro:franka_hand
-        connected_to="$(arg connection)"
+        connected_to="${arm_prefix_modified}${connection}"
         arm_id="${arm_id}"
+        arm_prefix="${arm_prefix_modified}"
         ee_id="${ee_id}_${ee_color}"
         ee_inertials="${xacro.load_yaml('$(find franka_description)/end_effectors/$(arg ee_id)/inertials.yaml')}"
-        rpy="$(arg rpy)"
-        xyz="$(arg xyz)"
+        rpy_ee="$(arg rpy_ee)"
+        xyz_ee="$(arg xyz_ee)"
         tcp_xyz="$(arg tcp_xyz)"
         tcp_rpy="$(arg tcp_rpy)"
         safety_distance="$(arg safety_distance)"
@@ -65,13 +75,16 @@
       <xacro:include filename="$(find franka_description)/end_effectors/common/ee_with_one_link.xacro"/>
       <xacro:include filename="$(find franka_description)/end_effectors/common/utils.xacro" />
       <xacro:include filename="$(find franka_description)/end_effectors/$(arg ee_id)/$(arg ee_id)_arguments.xacro" />
+      <xacro:property name="special_connection" value="$(arg special_connection)" />
+      <xacro:property name="connection" value="${special_connection if special_connection == '' else arm_id + '_link8'}" />
       <xacro:ee_with_one_link
-        connected_to="$(arg connection)"
+        connected_to="${arm_prefix_modified}${connection}"
         arm_id="${arm_id}"
+        arm_prefix="${arm_prefix_modified}"
         ee_id="${ee_id}"
         ee_inertials="${xacro.load_yaml('$(find franka_description)/end_effectors/$(arg ee_id)/inertials.yaml')}"
-        rpy="$(arg rpy)"
-        xyz="$(arg xyz)"
+        rpy_ee="$(arg rpy_ee)"
+        xyz_ee="$(arg xyz_ee)"
         tcp_xyz="$(arg tcp_xyz)"
         tcp_rpy="$(arg tcp_rpy)"
         safety_distance="$(arg safety_distance)"
@@ -138,13 +151,15 @@
     <xacro:if value="${ros2_control}">
       <xacro:include filename="$(find franka_description)/robots/common/franka_arm.ros2_control.xacro"/>
       <xacro:franka_arm_ros2_control
-          arm_id="$(arg arm_id)"
-          robot_ip="$(arg robot_ip)"
+          arm_id="${arm_id}"
+          robot_ip="${robot_ip}"
           use_fake_hardware="$(arg use_fake_hardware)"
           fake_sensor_commands="$(arg fake_sensor_commands)"
           gazebo="$(arg gazebo)"
           hand="$(arg hand)"
           gazebo_effort="$(arg gazebo_effort)"
+          arm_prefix="${arm_prefix}"
+          multi_arm="$(arg multi_arm)"
       />
     </xacro:if>
 
