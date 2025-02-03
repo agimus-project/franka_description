@@ -10,6 +10,9 @@
   -->
   <xacro:arg name="arm_id" default="fr3" />
 
+  <!-- Path to controller configuration when using Gazebo -->
+  <xacro:arg name="franka_controllers_params" default="$(find franka_gazebo_bringup)/config/franka_gazebo_controllers.yaml" />
+  
   <!-- Don't print a prefix for joints, visuals, and links? -->
   <xacro:arg name="no_prefix" default="false"/>
 
@@ -47,6 +50,7 @@
                       joint_limits="${xacro.load_yaml('$(find franka_description)/robots/fr3/joint_limits.yaml')}"
                       inertials="${xacro.load_yaml('$(find franka_description)/robots/fr3/inertials.yaml')}"
                       kinematics="${xacro.load_yaml('$(find franka_description)/robots/fr3/kinematics.yaml')}"
+                      franka_controllers_params='$(arg franka_controllers_params)'
                       dynamics="${xacro.load_yaml('$(find franka_description)/robots/fr3/dynamics.yaml')}"
                       gazebo="$(arg gazebo)"
                       hand="$(arg hand)"
